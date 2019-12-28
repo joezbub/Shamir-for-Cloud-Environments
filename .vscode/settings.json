@@ -80,6 +80,8 @@
         "unordered_set": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "hashtable": "cpp"
     }
 }

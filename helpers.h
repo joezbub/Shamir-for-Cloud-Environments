@@ -21,8 +21,8 @@ vector<ll> generateCoefficients(int k, ll secret);
 vector<SecretPair> calculateSecretPairs(int n, vector<ll> coefficients);
 
 /* find the find the inverse inv for a number num such that inv * num % p=1 */
-void gcdExtended(long long a, long long b, long long *x, long long *y);
+//void gcdExtended(long long a, long long b, long long *x, long long *y);
 
 /* Reconstruct the secret from k (x,y) pairs */
-long long reconstructSecret(vector<SecretPair> secretPairs);
+ll reconstructSecret(vector<SecretPair> secretPairs);
 

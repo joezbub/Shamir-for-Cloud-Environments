@@ -3,6 +3,6 @@
 #include <stdlib.h>
 #include "helpers.h"
 
-void split(string tmp, int n, int k);
+vector<SecretPair> split(long long secret, int n, int k);
 
-void restore();
+long long restore(int k, vector<SecretPair> secrets);

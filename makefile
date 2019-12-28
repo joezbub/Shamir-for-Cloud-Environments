@@ -1,2 +1,2 @@
 build:
-	g++ shamir.cpp helpers.cpp SecretPair.cpp -o shamir -lsodium
+	g++ -std=c++14 shamir.cpp helpers.cpp SecretPair.cpp splitter.cpp main.cpp -o main -lsodium

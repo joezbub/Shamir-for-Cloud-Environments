@@ -51,7 +51,6 @@ static int decrypt(const char *target_file, const char *source_file, const unsig
     size_t rlen;
     int eof, ret = -1;
     unsigned char  tag;
-
     fp_s = fopen(source_file, "rb");
     fp_t = fopen(target_file, "wb");
     fread(header, 1, sizeof header, fp_s);
@@ -61,8 +60,11 @@ static int decrypt(const char *target_file, const char *source_file, const unsig
     do {
         rlen = fread(buf_in, 1, sizeof buf_in, fp_s);
         eof = feof(fp_s);
+        //for (int i = 0; i < rlen; i++) cout << buf_in[i];
+        //    cout << endl << rlen << endl;
         if (crypto_secretstream_xchacha20poly1305_pull(&st, buf_out, &out_len, &tag,
                                                        buf_in, rlen, NULL, 0) != 0) {
+            cout << "oof" << endl;
             goto ret; /* corrupted chunk */
         }
         if (tag == crypto_secretstream_xchacha20poly1305_TAG_FINAL && ! eof) {
@@ -91,27 +93,28 @@ int main(int argc, char **argv){
         if (option == "-crypt") {
             clock_t begin = clock();
             unsigned char key[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-
+            string inp = argv[2];
             crypto_secretstream_xchacha20poly1305_keygen(key);
-            if (encrypt("encrypted.txt", argv[2], key) != 0) {
+            if (encrypt("encrypted.txt", inp.c_str(), key) != 0) {
                 return 1;
             }
 
-            cout << "----------SPLITTING-----------" << endl;
-            cout << "Blocks: " << endl;
             read_file("encrypted.txt", N, K);
 
-            cout << endl << "----------COMBINING-----------" << endl;
-            cout << "Blocks: " << endl;
+            clock_t end = clock();
+            double esecs = double(end - begin) / CLOCKS_PER_SEC;
+            cout << "Split in " << esecs << " seconds" << endl;
+            
             handle_text(N, K); 
 
-            if (decrypt("decrypted.txt", "combined_shares.txt", key) != 0) { 
+            clock_t end1 = clock();
+            double esecs1 = double(end1 - end) / CLOCKS_PER_SEC;
+            cout << "Combined in " << esecs1 << " seconds" << endl;
+
+            string out = "decrypt" + inp.substr(inp.find_last_of("."));
+            if (decrypt(out.c_str(), "encrypted.txt", key) != 0) { 
                 return 1;
             }
-
-            clock_t end1 = clock();
-            double esecs1 = double(end1 - begin) / CLOCKS_PER_SEC;
-            cout << esecs1 << " seconds" << endl;
         }  
         else if (option == "-split") { //splits specified file into n shares e.x(split-1.txt)
             read_file(argv[2], N, K);

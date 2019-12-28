@@ -103,9 +103,9 @@ int main(int argc, char **argv){
 
             cout << endl << "----------COMBINING-----------" << endl;
             cout << "Blocks: " << endl;
-            handle_text(N, K); //NOTE: needs to make combined_shares.txt from split files
+            handle_text(N, K); 
 
-            if (decrypt("decrypted.txt", "encrypted.txt", key) != 0) { //change to combined_shares.txt
+            if (decrypt("decrypted.txt", "combined_shares.txt", key) != 0) { 
                 return 1;
             }
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv){
     else if (argc == 2){
         string option = argv[1];
         if (option == "-restore"){ //restores file from split files e.x(split-1.txt)
-            handle_text(N, K); //NOTE: only recovers blocks so far, need to convert to chars
+            handle_text(N, K); //outputs to combined_shares.txt
         }
     }
 

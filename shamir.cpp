@@ -39,7 +39,7 @@ vector<SecretPair> split(ll secret, int n, int k){
 
 ll restore(int k, vector<SecretPair> secrets){
        
-    return (ll) reconstructSecret(secrets);
+    return reconstructSecret(secrets);
     /*
     // convert long long to string
     string res = "";

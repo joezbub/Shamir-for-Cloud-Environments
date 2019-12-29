@@ -95,7 +95,7 @@ void handle_text(int n, int k){
         ++ct;
     }
     if (ct < k) {
-        printf("Only %d key files found. %d required!\n", ct, k);
+        printf("Only %d split files found. %d required!\n", ct, k);
         return;
     }
     ret = restore(k, findhead);
@@ -118,10 +118,6 @@ void handle_text(int n, int k){
         ++ct;
         in.close();
         remove(f.c_str());
-    }
-    if (ct < k) {
-        printf("Only %d key files found. %d required!\n", ct, k);
-        return;
     }
     remove("combined_shares.dat");
     FILE *p = fopen("combined_shares.dat", "ab");

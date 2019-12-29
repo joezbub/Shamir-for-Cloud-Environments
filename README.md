@@ -64,4 +64,4 @@ I split the file into blocks of 7 bytes each for splitting according to the secr
 
 ## Performance
 
-The protocol can encrypt and split a 1 MB file in about 2.5 seconds and combine and decrypt in about 2 seconds. 
+The protocol can encrypt and split a 1 MB file according to a (2, 3) scheme in about 2.5 seconds and combine and decrypt in about 2 seconds. 

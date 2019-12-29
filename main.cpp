@@ -6,8 +6,8 @@
 #include "shamir.h"
 
 #define CHUNK_SIZE 4096
-#define N 3
-#define K 2
+
+int N = 3, K = 2; //default values, use -config to change
 
 void handle_text(int n, int k);
 void read_file(const char * efile, int n, int k);
@@ -108,19 +108,57 @@ void split_keys(unsigned char array[]){
     }
 }
 
+bool check(){
+    if (N < K) {
+        printf("Invalid K and N values. K must be <= N.\n\n");
+        return false;
+    }
+    else return true;
+}
+
+void set_vals(){
+    ifstream in("CONFIG_IMPORTANT.txt");
+    if (in.good()) {
+        int n, k;
+        in >> n >> k;
+        N = n;
+        K = k;
+    }
+    else return;
+}
+
+void help(){
+    printf("\nWelcome to Splitter!\n\n");
+    printf("The (k, n) scheme is defaulted to N = %d and K = %d.\n", N, K);
+    printf("Options:\n./main -config N K\n");
+    printf("./main -encrypt input_file\n");
+    printf("./main -decrypt output_file\n\n");
+}
+
 int main(int argc, char **argv){
 
     if (sodium_init() != 0) {
         return 1;
     }
-    string option = argv[1];
-    if (argc != 3) {
-        printf("Format: ./main -encrypt input_file\n");
-        printf("or ./main -decrypt output_file\n");
-        return 0;
+    if (argc != 3 && argc != 4) {
+        help();
+    }
+    else if (argc == 4) {
+        string option = argv[1];
+        if (option == "-config"){
+            remove("CONFIG_IMPORTANT.txt");
+            ofstream out("CONFIG_IMPORTANT.txt");
+            string n = argv[2], k = argv[3];
+            printf("\nSet (k, n) scheme to (%d, %d)!\n\n", stoi(k), stoi(n));
+            out << n << " " << k;
+        }
+        else help();
     }
     else {
         printf("\n");
+        set_vals();
+        if (!check()) return 0;
+        string option = argv[1];
         if (option == "-decrypt") {
             string outp = argv[2];
             clock_t begin = clock(), end;
@@ -206,6 +244,8 @@ int main(int argc, char **argv){
             double esecs = double(end - begin) / CLOCKS_PER_SEC;
             printf("\nEncrypted and Split in %f seconds.\n\n", esecs);
         }
+        
+        else help();
     }
     return 0;
 }

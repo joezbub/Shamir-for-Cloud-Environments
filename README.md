@@ -22,7 +22,7 @@ To combine and decrypt files:
 
 ## How it works
 
-My implementation encrypts files using the ChaCha20-Poly1305 construction (similar to AES) from [Libsodium] (https://libsodium.gitbook.io/doc/) and then splits using the Shamir's Secret Sharing algorithm using a default (2, 3) threshold scheme (you can change it by editing main.cpp).
+My implementation encrypts files using the ChaCha20-Poly1305 construction (similar to AES) from [Libsodium](https://libsodium.gitbook.io/doc/) and then splits using the Shamir's Secret Sharing algorithm using a default (2, 3) threshold scheme (you can change it by editing main.cpp).
  
 Shamir's Secret Sharing algorithm is a way to split an arbitrary secret `S` into `N` parts of which at least `K` are required to reconstruct `S`. For example, a root password can be split among five people, and if three or more of them combine their parts, they can recover the root password.
 

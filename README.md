@@ -1,4 +1,4 @@
-# Shamir Secret Sharing Protocol for Files Stored in the Cloud
+# Shamir Secret Sharing Protocol for Files Stored in Multi-Provider Clouds
 
 This is a C++ implementation of the sharing scheme. It allows users to encrypt and split as well as combine and decrypt their files stored in the cloud. Instead of splitting the key as most secret sharing implementations do today, my protocol involves splitting the file as well as the key for further security. This secret sharing architecture is designed for people working with sensitive documents such as lawyers and healthcare providers. 
 

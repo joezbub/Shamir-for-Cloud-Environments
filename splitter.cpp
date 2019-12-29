@@ -1,4 +1,3 @@
-//splits txt file into blocks of 7 char each
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -31,13 +30,11 @@ void read_file(const char * efile, int n, int k){
         int calc = ((curr_sz / 7) + 1) * 7 - curr_sz;
         ct_empty = calc;
     }
-    //uint16_t block_ct = (tot_sz + ct_empty) / 7;
     
     header_t header;
     header.tot_sz = tot_sz;
     header.csum = csum;
     header.emptyct = ct_empty;
-    //cout << (tot_sz + (int)ct_empty) / 7 << " " << tot_sz << " " << csum << endl;
 
     ll tmp = 0;
     memcpy(&tmp, (uint8_t * )&header, 7);
@@ -75,14 +72,15 @@ void read_file(const char * efile, int n, int k){
     }
     infile.close();
     for (i = 1; i <= n; ++i){
-        string rm = "split-" + to_string(i) + ".txt";
+        string rm = "split-" + to_string(i) + ".dat";
         remove(rm.c_str());
     }
     for (i = 1; i <= n; ++i){
-        ofstream out("split-" + to_string(i) + ".txt");
+        ofstream out("split-" + to_string(i) + ".dat");
         for (int j = 0; j < complete[i - 1].size(); ++j){
             out << complete[i - 1][j].getY() << "\n";
         }
+        out.close();
     }
 }
 
@@ -91,7 +89,7 @@ void handle_text(int n, int k){
     ll val, ret;
     vector<SecretPair> findhead;
     for (i = 1; i <= n; ++i){
-        ifstream in("split-" + to_string(i) + ".txt");
+        ifstream in("split-" + to_string(i) + ".dat");
         in >> val;
         findhead.push_back(SecretPair(i, val));
     }
@@ -99,20 +97,22 @@ void handle_text(int n, int k){
     header_t header;
     memcpy((uint8_t *)&header, &ret, 56);
     int blocks = ((int)header.emptyct + header.tot_sz) / 7, tot = header.tot_sz, checksum = header.csum;
-    //cout << blocks << " " << tot << " " << checksum << endl;
-    if ((int)checksum != CHECK_SUM) cout << "WARNING: FILE ALTERED!\n";
+    if ((int)checksum != CHECK_SUM) printf("WARNING: FILE ALTERED!\n");
 
     vector<vector<SecretPair> > ans(blocks, vector<SecretPair> (n));
     for (i = 1; i <= n; ++i){
-        ifstream in("split-" + to_string(i) + ".txt");
+        string f = "split-" + to_string(i) + ".dat";
+        ifstream in(f);
         in >> val;
         for (j = 0; j < blocks; ++j){
             in >> val;
             ans[j][i - 1] = SecretPair(i, val);
         }
+        in.close();
+        remove(f.c_str());
     }
-    remove("combined_shares.txt");
-    FILE *p = fopen("combined_shares.txt", "ab");
+    remove("combined_shares.dat");
+    FILE *p = fopen("combined_shares.dat", "ab");
     for (i = 0; i < blocks; ++i){
         if (tot < 7){
             ret = restore(k, ans[i]);
@@ -125,4 +125,5 @@ void handle_text(int n, int k){
             tot -= 7;
         }
     }
+    fclose(p);
 }

@@ -2,7 +2,6 @@
 #include <fstream>
 #include <stdlib.h>
 #include "helpers.h"
-using namespace std;
 
 typedef long long ll;
 

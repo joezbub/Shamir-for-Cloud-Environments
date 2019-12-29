@@ -12,7 +12,6 @@
 void handle_text(int n, int k);
 void read_file(const char * efile, int n, int k);
 
-
 typedef long long ll;
 
 static int encrypt(const char *target_file, const char *source_file, const unsigned char key[crypto_secretstream_xchacha20poly1305_KEYBYTES]){
@@ -129,18 +128,29 @@ int main(int argc, char **argv){
             ll val;
             int size = crypto_secretstream_xchacha20poly1305_KEYBYTES, i, j;
             int blocks = (((size / 7) + 1) * 7) / 7;
-            vector<vector<SecretPair> > ans(blocks, vector<SecretPair> (N));            
+
+            printf("Combining key and file according to (%d, %d) scheme...\n", K, N);
+            
+            vector<vector<SecretPair> > ans(blocks);      
+            int ct = 0;      
             for (i = 1; i <= N; ++i){
                 string f = "key-" + to_string(i) + ".dat";
                 ifstream in(f);
+                if (!in.good()) continue;
                 for (j = 0; j < blocks; ++j){
                     in >> val;
-                    ans[j][i - 1] = SecretPair(i, val);
+                    ans[j].push_back(SecretPair((ll)i, val));
                 }
+                ++ct;
                 in.close();
                 remove(f.c_str());
             }
-            
+
+            if (ct < K) {
+                printf("Only %d key files found. %d required!\n", ct, K);
+                return 0;
+            }
+
             for (i = 0; i < blocks; ++i){
                 if (size < 7){
                     val = restore(K, ans[i]);
@@ -153,6 +163,7 @@ int main(int argc, char **argv){
                     size -= 7;
                 }
             }
+
             printf("Keys recovered...\n");
             
             handle_text(N, K);
@@ -171,11 +182,14 @@ int main(int argc, char **argv){
             double esecs = double(end - begin) / CLOCKS_PER_SEC;
             printf("\nDecrypted and Combined in %f seconds.\n\n", esecs);
         }  
+
         else if (option == "-encrypt"){
             clock_t begin = clock(), end;
             unsigned char key[crypto_secretstream_xchacha20poly1305_KEYBYTES];
             string inp = argv[2];
             crypto_secretstream_xchacha20poly1305_keygen(key);
+            
+            printf("Splitting key and file according to (%d, %d) scheme...\n", K, N);
 
             if (encrypt("encrypted.dat", inp.c_str(), key) != 0) {
                 return 1;

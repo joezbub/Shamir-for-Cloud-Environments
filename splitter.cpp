@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <streambuf>
 #include "shamir.h"
-using namespace std;
 
 #define CHUNK_SIZE 42000
 #define CHECK_SUM 6969
@@ -85,13 +84,19 @@ void read_file(const char * efile, int n, int k){
 }
 
 void handle_text(int n, int k){
-    int i, j;
+    int i, j, ct = 0;
     ll val, ret;
     vector<SecretPair> findhead;
     for (i = 1; i <= n; ++i){
         ifstream in("split-" + to_string(i) + ".dat");
+        if (!in.good()) continue;
         in >> val;
         findhead.push_back(SecretPair(i, val));
+        ++ct;
+    }
+    if (ct < k) {
+        printf("Only %d key files found. %d required!\n", ct, k);
+        return;
     }
     ret = restore(k, findhead);
     header_t header;
@@ -99,17 +104,24 @@ void handle_text(int n, int k){
     int blocks = ((int)header.emptyct + header.tot_sz) / 7, tot = header.tot_sz, checksum = header.csum;
     if ((int)checksum != CHECK_SUM) printf("WARNING: FILE ALTERED!\n");
 
-    vector<vector<SecretPair> > ans(blocks, vector<SecretPair> (n));
+    vector<vector<SecretPair> > ans(blocks);
+    ct = 0;
     for (i = 1; i <= n; ++i){
         string f = "split-" + to_string(i) + ".dat";
         ifstream in(f);
+        if (!in.good()) continue;
         in >> val;
         for (j = 0; j < blocks; ++j){
             in >> val;
-            ans[j][i - 1] = SecretPair(i, val);
+            ans[j].push_back(SecretPair(i, val));
         }
+        ++ct;
         in.close();
         remove(f.c_str());
+    }
+    if (ct < k) {
+        printf("Only %d key files found. %d required!\n", ct, k);
+        return;
     }
     remove("combined_shares.dat");
     FILE *p = fopen("combined_shares.dat", "ab");

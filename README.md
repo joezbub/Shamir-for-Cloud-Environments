@@ -7,8 +7,14 @@ This is a C++ implementation of the sharing scheme. It allows users to encrypt a
 Download the project and run the makefile like so:
 
 ```bash
+cd src
 make
 ``` 
+
+To change the (k, n) scheme from the default (2, 3):
+```bash
+./main -config *N* *K*
+```
 
 To encrypt and split files:
 ```bash

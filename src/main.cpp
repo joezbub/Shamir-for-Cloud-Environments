@@ -213,7 +213,6 @@ int main(int argc, char **argv){
             printf("File decrypted...\n");
 
             remove("combined_shares.dat");
-            remove("encrypted.dat");
             printf("Cleaned folder...\n");
 
             end = clock();
@@ -239,6 +238,9 @@ int main(int argc, char **argv){
 
             read_file("encrypted.dat", N, K);
             printf("File split...\n");
+
+            remove("encrypted.dat");
+            printf("Cleaned folder...\n");
 
             end = clock();
             double esecs = double(end - begin) / CLOCKS_PER_SEC;

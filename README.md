@@ -4,7 +4,7 @@ This is a C++ implementation of the sharing scheme. It allows users to encrypt a
 
 ## How to Use It
 
-Download the project and run the executable main file in the bin directory.
+Run the executable main file in the bin directory.
 
 To change the (k, n) scheme from the default (2, 3):
 ```bash

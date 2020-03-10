@@ -1,6 +1,6 @@
-# Shamir Secret Sharing Protocol for Files Stored in Multi-Provider Clouds
+# Shamir Secret Sharing Architecture for Documents in Multi-Provider Clouds
 
-This is a C++ implementation of the sharing scheme. It allows users to encrypt and split as well as combine and decrypt their files stored in the cloud. Instead of splitting the key as most secret sharing implementations do today, my protocol involves splitting the file as well as the key for further security. This secret sharing architecture is designed for people working with sensitive documents such as lawyers and healthcare providers. 
+This is a C++ implementation of a secret sharing architecture which ensures authenticity, availability, and perfect privacy. It allows users to encrypt and split as well as combine and decrypt their files stored in the cloud. The only way to compromise this sytem is if multiple cloud providers collude, which is still unlikely given that the shares are additionally encrypted.
 
 ## How to Use It
 
@@ -23,11 +23,11 @@ To combine and decrypt files:
 
 ## How it works
 
-My implementation encrypts files using the ChaCha20-Poly1305 construction (similar to AES) from [Libsodium](https://libsodium.gitbook.io/doc/) and then splits using the Shamir's Secret Sharing algorithm using a default (2, 3) threshold scheme (you can change it by editing main.cpp).
+My implementation encrypts files using the ChaCha20-Poly1305 construction. My software timings show that this construction has a significant efficiency advatage over AES256-GCM, which surprised me since AES is also a commonly authentication encryption construction for data in the Cloud. My architecture then splits the original file into fragments using the Shamir's Secret Sharing algorithm through a default (2, 3) threshold scheme (able to be changed as shown above). The mathematics behhind this scheme ensure perfect privacy and space efficiency.
  
-Shamir's Secret Sharing algorithm is a way to split an arbitrary secret `S` into `N` parts of which at least `K` are required to reconstruct `S`. For example, a root password can be split among five people, and if three or more of them combine their parts, they can recover the root password.
+My secret sharing algorithm is a way to split an arbitrary secret `S` into `N` parts of which at least `K` are required to reconstruct `S`. For example, a root password can be split among five people, and if three or more of them combine their parts, they can recover the root password.
 
-### Splitting secrets
+### Splitting a secret
 
 Splitting a secret works by encoding the secret as the constant in a random polynomial of `K` degree. For example, if we're splitting the secret number `42` among five people with a threshold of three (`N=5,K=3`), we might end up with the polynomial:
 
@@ -61,8 +61,4 @@ Using these points, they construct a [Lagrange polynomial](https://en.wikipedia.
 
 ### Implementation details
 
-I split the file into blocks of 7 bytes each for splitting according to the secret sharing algorithm. I can only hold 7 bytes for each block because the implementation uses C++ `long long` (8 bytes) to store the blocks. The split key and blocks can be found in the resulting `.dat` files.
-
-## Performance
-
-The protocol can encrypt and split a 1 MB file according to a (2, 3) scheme in about 2.5 seconds and combine and decrypt in about 2 seconds. 
+I split the file into blocks of 7 bytes each for splitting according to the secret sharing algorithm. I can only hold 7 bytes for each block because the implementation uses C++ `long long` (8 bytes) to store the blocks. The split key and blocks can be found in the resulting `.dat` files. The resulting payload fragments indicate a series of 64-bit integers.
